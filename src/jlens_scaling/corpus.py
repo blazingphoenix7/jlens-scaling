@@ -35,7 +35,8 @@ def _select(
         text = text.strip()
         if not text:
             continue
-        n_tok = tokenizer(text, max_length=4096).input_ids.shape[1]
+        ids = tokenizer(text, truncation=True, max_length=4096).input_ids
+        n_tok = ids.shape[1] if hasattr(ids, "shape") else len(ids)
         if n_tok >= min_tokens:
             kept.append(text)
         if len(kept) >= buffer_size:

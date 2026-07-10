@@ -38,7 +38,7 @@ def min_band_rank(grid, target_id: int, band: list[int]) -> int:
 def _encode_word(tokenizer, text: str) -> list[int]:
     try:
         return list(tokenizer.encode(text, add_special_tokens=False))
-    except TypeError:  # toy tokenizers without add_special_tokens
+    except (TypeError, AttributeError):  # toy tokenizers without .encode kwargs
         return tokenizer(text).input_ids[0].tolist()
 
 

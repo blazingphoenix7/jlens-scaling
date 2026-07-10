@@ -17,6 +17,22 @@ from jlens_scaling.readout import rank_grid
 
 TEMPLATE = "Think of a {category}. Answer in one word:"
 
+_STOPWORDS = {"a", "an", "the", "one", "it"}
+
+
+def _is_degenerate(answer_token: str, category: str) -> bool:
+    """True when the greedy 'answer' is not a real category exemplar: punctuation
+    or non-alphabetic tokens, stopwords, or an echo of the category word itself
+    (base models often do all three). Degenerate answers trivially self-read in
+    the lens and must not count as report evidence."""
+    word = answer_token.strip().lower()
+    cat = category.strip().lower()
+    if not word.isalpha():
+        return True
+    if word in _STOPWORDS:
+        return True
+    return word in cat or cat in word
+
 
 def run(lens, model, data_path: str, *, chat: bool, out_path: str) -> dict:
     with open(data_path, encoding="utf-8") as f:
@@ -27,16 +43,23 @@ def run(lens, model, data_path: str, *, chat: bool, out_path: str) -> dict:
     band = [l for l in band_layers(model.n_layers) if l in set(lens.source_layers)]
     per_category = {}
     hits = 0
+    valid_hits = 0
+    n_valid = 0
     for category in sorted(candidates):
         prompt = format_prompt(model.tokenizer, template.format(category=category), chat)
         answer_id = greedy_next_token(model, prompt)
         answer_str = model.tokenizer.decode([answer_id])
+        degenerate = _is_degenerate(answer_str, category)
         grid = rank_grid(lens, model, prompt, target_ids=[answer_id])
         band_min = min_band_rank(grid, answer_id, band)
         hit = band_min <= 5
         hits += int(hit)
+        if not degenerate:
+            n_valid += 1
+            valid_hits += int(hit)
         per_category[category] = {
             "answer_token": answer_str,
+            "answer_degenerate": degenerate,
             "band_min_rank": band_min,
             "hit_top5": hit,
             "grid": grid.to_json(),
@@ -46,7 +69,9 @@ def run(lens, model, data_path: str, *, chat: bool, out_path: str) -> dict:
         "template": template,
         "band": band,
         "n_categories": len(per_category),
+        "n_valid_answers": n_valid,
         "report_hit_rate_top5": hits / max(len(per_category), 1),
+        "report_hit_rate_top5_valid": valid_hits / n_valid if n_valid else None,
         "per_category": per_category,
     }
     with open(out_path, "w", encoding="utf-8") as f:

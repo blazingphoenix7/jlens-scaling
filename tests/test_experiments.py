@@ -1,6 +1,16 @@
 from tests.tiny import TinyDecoder
 
 from jlens_scaling.experiments.common import format_prompt, greedy_next_token
+from jlens_scaling.experiments.verbal_report import _is_degenerate
+
+
+def test_is_degenerate_flags_echoes_punctuation_stopwords():
+    assert _is_degenerate(' "', "beverage")
+    assert _is_degenerate(" fruit", "fruit")
+    assert _is_degenerate(" fruits", "fruit")
+    assert _is_degenerate(" a", "instrument")
+    assert not _is_degenerate(" blue", "color")
+    assert not _is_degenerate(" Earth", "planet")
 
 
 def test_format_prompt_raw_passthrough():

@@ -1,0 +1,31 @@
+{
+  "model_id": "openai-community/gpt2",
+  "revision_requested": "main",
+  "revision_resolved": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+  "slug": "gpt2-small",
+  "n_prompts_requested": 100,
+  "n_prompts_fitted": 100,
+  "dim_batch": 16,
+  "max_seq_len": 128,
+  "skip_first": 16,
+  "corpus": "wikitext-103",
+  "corpus_seed": 0,
+  "min_tokens": 64,
+  "source_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "torch_version": "2.13.0+cpu",
+  "transformers_version": "5.13.0",
+  "jlens_scaling_version": "0.1.0",
+  "wall_seconds": 4812.4
+}

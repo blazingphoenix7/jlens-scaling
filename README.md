@@ -53,7 +53,9 @@ python scripts/make_figures.py --results results/gpt2-small/two_hop.json --out f
 ```
 
 Fitting checkpoints after every prompt and resumes automatically. Pre-fitted
-lenses: `<HF Hub link — pending upload>`.
+lenses (skip the fit entirely):
+[huggingface.co/blzphnx/jlens-scaling-lenses](https://huggingface.co/blzphnx/jlens-scaling-lenses)
+— load with `JacobianLens.from_pretrained("blzphnx/jlens-scaling-lenses", filename="gpt2-small/lens.pt")`.
 
 **Windows note:** if `pip install torch` fails with `WinError 206`, either
 enable NTFS long paths (admin) or create the venv at a short path like

@@ -1,0 +1,9 @@
+jlens-scaling
+Copyright 2026 Aaryan Mehta
+
+This project depends on and vendors prompt data from:
+  jacobian-lens — Copyright 2026 Anthropic PBC
+  https://github.com/anthropics/jacobian-lens
+  Licensed under the Apache License, Version 2.0.
+Vendored files under data/anthropic/ and tests/tiny.py retain their
+original Apache-2.0 headers.

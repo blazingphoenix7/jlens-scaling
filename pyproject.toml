@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jlens-scaling"
+version = "0.1.0"
+description = "How does the J-lens global workspace emerge with model scale? CPU-first replication and scale study."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "torch",
+    "transformers>=5.5",
+    "huggingface_hub",
+    "numpy",
+    "datasets",
+    "pyyaml",
+    "matplotlib",
+    "jlens @ git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88

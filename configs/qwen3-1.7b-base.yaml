@@ -1,0 +1,13 @@
+model:
+  model_id: Qwen/Qwen3-1.7B-Base
+  revision: main
+  dtype: float32
+  slug: qwen3-1.7b-base
+  chat: false
+fit:
+  n_prompts: 100
+  max_seq_len: 128
+  dim_batch: 16
+  corpus: wikitext-103
+  corpus_seed: 0
+  min_tokens: 64

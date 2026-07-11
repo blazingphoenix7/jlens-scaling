@@ -15,20 +15,23 @@ models, starting from the bottom of the ladder.
 *Qwen3-0.6B answering an atomic-number→symbol question: the element name
 ("sodium") is lens rank 1 in the mid-layer band — and is never said.*
 
-## Phase 1 results — the first two rungs (fitted on a 10-core desktop CPU)
+## Results — the first three rungs (fitted on a 10-core desktop CPU)
 
 Fitting: 100 wikitext-103 prompts each (seeded, cached), official
 [`jlens`](https://github.com/anthropics/jacobian-lens) estimator, `dim_batch=16`.
-GPT-2-124M: **80 min**; Qwen3-0.6B: **≈8.5 h** (checkpoint-resumed across
-interruptions). Full provenance in `results/*/fit_summary.json`.
+GPT-2-124M: **80 min**; GPT-2-355M: **≈5.5 h**; Qwen3-0.6B: **≈8.5 h**
+(the longer fits were checkpoint-resumed across interruptions). Full
+provenance in `results/*/fit_summary.json`.
 
-| | GPT-2-124M (base) | Qwen3-0.6B (instruct) |
-|---|---|---|
-| Verbal report: valid answers | 5/14 | 10/14 |
-| … valid answers band-readable (rank ≤ 5) | **0/5** | **0/10** |
-| Two-hop baseline accuracy | 7/90 (8%) | 8/90 (9%) |
-| … silent intermediate readable, correct items | 5/7 (71%) | **7/8 (88%)** |
-| … intermediate ranks on those items | 2–21 | **1–6** |
+| | GPT-2-124M (base) | GPT-2-355M (base) | Qwen3-0.6B (instruct) |
+|---|---|---|---|
+| Verbal report: valid answers | 5/14 | 12/14 | 10/14 |
+| … valid answers band-readable (rank ≤ 5) | 0/5 | 1/12 | 0/10 |
+| Two-hop baseline accuracy | 7/90 (8%) | **15/90 (17%)** | 8/90 (9%) |
+| … silent intermediate readable, correct items | 5/7 (71%) | 8/15 (53%) | **7/8 (88%)** |
+| … intermediate ranks on those items | 2–21 | 2–30 | **1–6** |
+| Causal swap success (top-1 / top-5) | 0/7 / 0/7 | 0/15 / 0/15 | **3/8 / 6/8** |
+| Lens concentration vs. isotropic baseline | 1.00× | 1.05× | **1.97×** |
 
 **Verbal report is absent at both rungs.** Neither model's forthcoming answer
 is band-readable at rank ≤ 5 before the answer position — though near-misses
@@ -48,12 +51,22 @@ develops a coarse "European city" region (`Constantinople` → `Zurich` →
 `Cologne` at layers 6–10) that never resolves to *Paris* — and it answers
 *London*.
 
-**Interpretation (cautious, small-n):** at these scales, workspace-style
-readout appears only where capability exists — and it's the readout's
-*sharpness*, not task accuracy, that improved from 124M to 0.6B. Whether that
-trend continues is what the pre-registered ladder
-([`docs/preregistration-draft.md`](docs/preregistration-draft.md)) measures;
-GPT-2-355M and Qwen3-1.7B land next.
+**The third rung breaks the simple scale story — informatively.** GPT-2-355M
+doubles two-hop capability (17%) yet its lens directions remain causally
+inert (0/15 swaps) and its activation variance unconcentrated (1.05× chance),
+while the modestly larger Qwen3-0.6B shows causal swaps working (6/8 top-5)
+and 2× concentration. Within the GPT-2 family, more parameters bought
+capability but no workspace signature; the signature appears only in the
+modern instruct model. Parameter count and training regime are confounded
+here, which is why the pre-registration
+([`docs/preregistration-draft.md`](docs/preregistration-draft.md)) plans a
+same-family base-vs-instruct comparison; Qwen3-1.7B is fitting next.
+
+**Interpretation (cautious, small-n):** across three rungs, task capability
+and workspace signatures dissociate twice: readability without causal effect
+(both GPT-2 sizes), and causal effect arriving without the report property
+(Qwen3-0.6B). Whatever assembles a workspace, it is not raw parameter count
+alone.
 
 A methodological note for anyone replicating on chat models: grading the
 model's *first greedy token* silently breaks on chat tokenizers (Qwen emits

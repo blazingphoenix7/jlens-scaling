@@ -14,9 +14,45 @@ from __future__ import annotations
 
 import json
 
+import torch
+
 from jlens_scaling.experiments.common import format_prompt, greedy_next_token
-from jlens_scaling.metrics import band_layers, min_band_rank, token_variants
+from jlens_scaling.metrics import band_layers, min_band_rank, token_rank, token_variants
 from jlens_scaling.readout import rank_grid
+from jlens_scaling.steering import ResidualEdit, apply_edits, token_direction
+
+
+def _swap_item(
+    lens, model, prompt: str, band: list[int], out_word: str, in_word: str,
+    swap_answer: str, *, scale: float,
+) -> dict:
+    """Causal arm: swap out_word->in_word lens directions across the band at
+    every prompt position; grade the final-position prediction against
+    swap_answer (both token variants)."""
+    out_id = token_variants(model.tokenizer, out_word)[0]
+    in_id = token_variants(model.tokenizer, in_word)[0]
+    edits = [
+        ResidualEdit(
+            layer=layer,
+            positions=None,
+            direction_out=token_direction(lens, model, out_id, layer),
+            direction_in=token_direction(lens, model, in_id, layer),
+            scale=scale,
+        )
+        for layer in band
+    ]
+    input_ids = model.encode(prompt)
+    logits = apply_edits(model, input_ids, edits)  # [seq, vocab]
+    final = logits[-1]
+    greedy_id = int(final.argmax().item())
+    swap_ids = token_variants(model.tokenizer, swap_answer)
+    swap_rank = min(token_rank(final, tid) for tid in swap_ids)
+    return {
+        "swap_greedy_token": model.tokenizer.decode([greedy_id]),
+        "swap_success_top1": greedy_id in swap_ids,
+        "swap_success_top5": swap_rank <= 5,
+        "swap_answer_rank": swap_rank,
+    }
 
 
 def run(
@@ -27,6 +63,8 @@ def run(
     chat: bool,
     out_path: str,
     max_items: int | None = None,
+    swap: bool = False,
+    swap_scale: float = 1.0,
 ) -> dict:
     with open(data_path, encoding="utf-8") as f:
         data = json.load(f)
@@ -54,11 +92,19 @@ def run(
         best_intermediate_id = min(inter_by_variant, key=inter_by_variant.get)
         inter_rank = inter_by_variant[best_intermediate_id]
         ans_rank = min(min_band_rank(grid, tid, band) for tid in answer_ids)
+        swap_fields: dict = {}
         if baseline_correct:
             n_correct += 1
             n_hit += int(inter_rank <= 5)
+            if swap:
+                swap_fields = _swap_item(
+                    lens, model, prompt, band,
+                    item["intermediate"], item["swap_to"], item["swap_answer"],
+                    scale=swap_scale,
+                )
         per_item.append(
             {
+                **swap_fields,
                 "name": item.get("name"),
                 "category": item.get("category"),
                 "prompt": item["prompt"],
@@ -81,6 +127,20 @@ def run(
         "intermediate_hit_rate_top5": n_hit / max(n_correct, 1),
         "per_item": per_item,
     }
+    if swap:
+        swapped = [i for i in per_item if "swap_success_top1" in i]
+        result["swap_scale"] = swap_scale
+        result["n_swapped"] = len(swapped)
+        result["swap_success_rate_top1"] = (
+            sum(i["swap_success_top1"] for i in swapped) / len(swapped)
+            if swapped
+            else 0.0
+        )
+        result["swap_success_rate_top5"] = (
+            sum(i["swap_success_top5"] for i in swapped) / len(swapped)
+            if swapped
+            else 0.0
+        )
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
     return result

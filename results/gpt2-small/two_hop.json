@@ -24995,6 +24995,10 @@
       }
     },
     {
+      "swap_greedy_token": " Canadian",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 8983,
       "name": "ex-city-currency-Toronto-Beijing",
       "category": "city-currency",
       "prompt": "Fact: The currency used in the country where Toronto is located is the",
@@ -25797,6 +25801,10 @@
       }
     },
     {
+      "swap_greedy_token": " Canadian",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 1454,
       "name": "ex-city-currency-Toronto-Mumbai",
       "category": "city-currency",
       "prompt": "Fact: The currency used in the country where Toronto is located is the",
@@ -38295,6 +38303,10 @@
       }
     },
     {
+      "swap_greedy_token": " Athens",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 21609,
       "name": "ex2-language-capital-Greek",
       "category": "language-capital",
       "prompt": "Fact: The capital of the country where Greek is the primary language is",
@@ -39097,6 +39109,10 @@
       }
     },
     {
+      "swap_greedy_token": " Budapest",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 336,
       "name": "ex2-language-capital-Hungarian",
       "category": "language-capital",
       "prompt": "Fact: The capital of the country where Hungarian is the primary language is",
@@ -39899,6 +39915,10 @@
       }
     },
     {
+      "swap_greedy_token": " Poland",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 3721,
       "name": "ex2-language-capital-Polish",
       "category": "language-capital",
       "prompt": "Fact: The capital of the country where Polish is the primary language is",
@@ -40701,6 +40721,10 @@
       }
     },
     {
+      "swap_greedy_token": " Sweden",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 3678,
       "name": "ex2-language-capital-Swedish",
       "category": "language-capital",
       "prompt": "Fact: The capital of the country where Swedish is the primary language is",
@@ -64396,6 +64420,10 @@
       }
     },
     {
+      "swap_greedy_token": " Einstein",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 108,
       "name": "person-firstname-einstein",
       "category": "person-firstname",
       "prompt": "Fact: The first name of the physicist who developed the theory of general relativity was",
@@ -81846,5 +81874,9 @@
         }
       }
     }
-  ]
+  ],
+  "swap_scale": 1.0,
+  "n_swapped": 7,
+  "swap_success_rate_top1": 0.0,
+  "swap_success_rate_top5": 0.0
 }

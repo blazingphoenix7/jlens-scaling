@@ -51157,6 +51157,10 @@
       }
     },
     {
+      "swap_greedy_token": " Rome",
+      "swap_success_top1": true,
+      "swap_success_top5": true,
+      "swap_answer_rank": 1,
       "name": "ex-city-capital-Lyon-Naples",
       "category": "city-capital",
       "prompt": "Fact: The capital of the country where Lyon is located is",
@@ -61067,6 +61071,10 @@
       }
     },
     {
+      "swap_greedy_token": " Italian",
+      "swap_success_top1": true,
+      "swap_success_top5": true,
+      "swap_answer_rank": 1,
       "name": "ex-city-language-Lyon-Naples",
       "category": "city-language",
       "prompt": "Fact: The language spoken in the country where Lyon is located is",
@@ -74247,6 +74255,10 @@
       }
     },
     {
+      "swap_greedy_token": " Na",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 633,
       "name": "ex-element-symbol-11-26",
       "category": "element-symbol",
       "prompt": "Fact: The chemical symbol for the element with atomic number 11 is",
@@ -85194,6 +85206,10 @@
       }
     },
     {
+      "swap_greedy_token": " Russian",
+      "swap_success_top1": true,
+      "swap_success_top5": true,
+      "swap_answer_rank": 1,
       "name": "ex2-city-language-Cairo",
       "category": "city-language",
       "prompt": "Fact: The language spoken in the country where Cairo is located is",
@@ -86882,6 +86898,10 @@
       }
     },
     {
+      "swap_greedy_token": " Egyptian",
+      "swap_success_top1": false,
+      "swap_success_top5": true,
+      "swap_answer_rank": 3,
       "name": "ex2-city-language-Moscow",
       "category": "city-language",
       "prompt": "Fact: The language spoken in the country where Moscow is located is",
@@ -103818,6 +103838,10 @@
       }
     },
     {
+      "swap_greedy_token": "2",
+      "swap_success_top1": false,
+      "swap_success_top5": true,
+      "swap_answer_rank": 4,
       "name": "func-filters-count",
       "category": "multihop",
       "prompt": "Fact: In humans, the number of organs that filter blood to make urine is ",
@@ -154632,6 +154656,10 @@
       }
     },
     {
+      "swap_greedy_token": " the",
+      "swap_success_top1": false,
+      "swap_success_top5": false,
+      "swap_answer_rank": 74,
       "name": "person-firstname-shakespeare",
       "category": "person-firstname",
       "prompt": "Fact: The first name of the playwright who wrote Romeo and Juliet was",
@@ -156429,6 +156457,10 @@
       }
     },
     {
+      "swap_greedy_token": "1",
+      "swap_success_top1": false,
+      "swap_success_top5": true,
+      "swap_answer_rank": 2,
       "name": "planet-3-moons",
       "category": "multihop",
       "prompt": "Fact: The number of natural moons orbiting the planet third from the Sun is ",
@@ -187036,5 +187068,9 @@
         }
       }
     }
-  ]
+  ],
+  "swap_scale": 1.0,
+  "n_swapped": 8,
+  "swap_success_rate_top1": 0.375,
+  "swap_success_rate_top5": 0.75
 }

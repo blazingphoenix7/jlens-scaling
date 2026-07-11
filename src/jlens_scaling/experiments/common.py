@@ -49,9 +49,12 @@ def greedy_first_word(
     stripped.
     """
     input_ids = model.encode(prompt, max_length=max_seq_len)
+    special_ids = set(getattr(model.tokenizer, "all_special_ids", None) or [])
     decoded = ""
     for _ in range(max_new_tokens):
         tid = _greedy_from_ids(model, input_ids)
+        if tid in special_ids:  # end-of-turn etc. terminates the answer
+            break
         decoded += model.tokenizer.decode([tid])
         if len(decoded.strip().split()) > 1:
             break

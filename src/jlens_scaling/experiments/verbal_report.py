@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import json
 
-from jlens_scaling.experiments.common import format_prompt, greedy_next_token
-from jlens_scaling.metrics import band_layers, min_band_rank
+from jlens_scaling.experiments.common import format_prompt, greedy_first_word
+from jlens_scaling.metrics import band_layers, min_band_rank, token_variants
 from jlens_scaling.readout import rank_grid
 
 TEMPLATE = "Think of a {category}. Answer in one word:"
@@ -47,18 +47,22 @@ def run(lens, model, data_path: str, *, chat: bool, out_path: str) -> dict:
     n_valid = 0
     for category in sorted(candidates):
         prompt = format_prompt(model.tokenizer, template.format(category=category), chat)
-        answer_id = greedy_next_token(model, prompt)
-        answer_str = model.tokenizer.decode([answer_id])
-        degenerate = _is_degenerate(answer_str, category)
-        grid = rank_grid(lens, model, prompt, target_ids=[answer_id])
-        band_min = min_band_rank(grid, answer_id, band)
+        answer_word = greedy_first_word(model, prompt)
+        degenerate = _is_degenerate(answer_word or "?", category)
+        target_ids = token_variants(model.tokenizer, answer_word) if answer_word else []
+        if not target_ids:
+            degenerate = True
+            target_ids = [0]
+        grid = rank_grid(lens, model, prompt, target_ids=target_ids)
+        band_min = min(min_band_rank(grid, tid, band) for tid in target_ids)
         hit = band_min <= 5
         hits += int(hit)
         if not degenerate:
             n_valid += 1
             valid_hits += int(hit)
         per_category[category] = {
-            "answer_token": answer_str,
+            "answer_word": answer_word,
+            "answer_token_variants": target_ids,
             "answer_degenerate": degenerate,
             "band_min_rank": band_min,
             "hit_top5": hit,

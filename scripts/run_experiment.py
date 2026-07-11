@@ -47,11 +47,14 @@ def main() -> None:
     elif args.experiment == "two_hop":
         from jlens_scaling.experiments import two_hop
 
+        # Upstream probe-swap is a completion-style protocol (prompts end just
+        # before the answer; the official repo's Qwen example is raw
+        # completion), so chat templating is never applied here.
         result = two_hop.run(
             lens,
             model,
             DATA[args.experiment],
-            chat=cfg.model.chat,
+            chat=False,
             out_path=out_path,
             max_items=args.max_items,
         )

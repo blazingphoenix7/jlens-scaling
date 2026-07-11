@@ -28,6 +28,9 @@ def main() -> None:
     parser.add_argument("--lens", required=True)
     parser.add_argument("--out", default="results")
     parser.add_argument("--max-items", type=int, default=None)
+    parser.add_argument("--swap", action="store_true",
+                        help="two_hop only: run the causal swap arm")
+    parser.add_argument("--swap-scale", type=float, default=1.0)
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -57,12 +60,20 @@ def main() -> None:
             chat=False,
             out_path=out_path,
             max_items=args.max_items,
+            swap=args.swap,
+            swap_scale=args.swap_scale,
         )
         print(
             f"baseline acc: {result['baseline_accuracy']:.2f}  "
             f"intermediate readable (top-5 in band, correct items): "
             f"{result['intermediate_hit_rate_top5']:.2f}"
         )
+        if args.swap:
+            print(
+                f"swap success (n={result['n_swapped']}): "
+                f"top1 {result['swap_success_rate_top1']:.2f}  "
+                f"top5 {result['swap_success_rate_top5']:.2f}"
+            )
     print(f"wrote {out_path}")
 
 

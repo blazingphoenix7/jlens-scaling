@@ -14,8 +14,6 @@ from __future__ import annotations
 
 import json
 
-import torch
-
 from jlens_scaling.experiments.common import format_prompt, greedy_next_token
 from jlens_scaling.metrics import band_layers, min_band_rank, token_rank, token_variants
 from jlens_scaling.readout import rank_grid

@@ -27,7 +27,7 @@ def _is_degenerate(answer_token: str, category: str) -> bool:
     the lens and must not count as report evidence."""
     word = answer_token.strip().lower()
     cat = category.strip().lower()
-    if not word.isalpha():
+    if not word.isalpha() or len(word) < 2:
         return True
     if word in _STOPWORDS:
         return True

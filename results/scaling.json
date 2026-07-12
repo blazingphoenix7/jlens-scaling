@@ -45,12 +45,25 @@
       "family": "qwen3",
       "training": "instruct",
       "two_hop_accuracy": 0.3111111111111111,
-      "readability": 0.4642857142857143,
+      "readability": 0.5,
       "swap_top1": 0.39285714285714285,
       "swap_top5": 0.7142857142857143,
       "verbal_valid": 13,
       "verbal_hit_rate_valid": 0.07692307692307693,
-      "concentration_ratio": 2.1427941094471126
+      "concentration_ratio": 2.1395165382534755
+    },
+    {
+      "slug": "qwen3-1.7b-base",
+      "params": 1700000000,
+      "family": "qwen3",
+      "training": "base",
+      "two_hop_accuracy": 0.4111111111111111,
+      "readability": 0.7027027027027027,
+      "swap_top1": 0.4864864864864865,
+      "swap_top5": 0.7297297297297297,
+      "verbal_valid": 14,
+      "verbal_hit_rate_valid": 0.0,
+      "concentration_ratio": 1.9980636775752953
     }
   ],
   "capability_matched": {
@@ -61,13 +74,15 @@
       "gpt2-medium": null,
       "gpt2-small": null,
       "qwen3-0.6b": null,
-      "qwen3-1.7b": null
+      "qwen3-1.7b": null,
+      "qwen3-1.7b-base": null
     },
     "swap_top1_by_slug": {
       "gpt2-medium": null,
       "gpt2-small": null,
       "qwen3-0.6b": null,
-      "qwen3-1.7b": null
+      "qwen3-1.7b": null,
+      "qwen3-1.7b-base": null
     }
   }
 }

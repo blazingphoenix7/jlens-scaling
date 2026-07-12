@@ -26,11 +26,11 @@ AXIS = "#c3c2b7"
 
 SERIES_STYLE = {
     ("gpt2", "base"): {"color": "#2a78d6", "label": "GPT-2 (base)",
-                        "ls": "-", "mfc": "#2a78d6"},
+                        "ls": "-", "mfc": "#2a78d6", "label_dy": 9},
     ("qwen3", "instruct"): {"color": "#1baf7a", "label": "Qwen3 (instruct)",
-                             "ls": "-", "mfc": "#1baf7a"},
+                             "ls": "-", "mfc": "#1baf7a", "label_dy": 9},
     ("qwen3", "base"): {"color": "#1baf7a", "label": "Qwen3 (base)",
-                         "ls": "--", "mfc": SURFACE},
+                         "ls": "--", "mfc": SURFACE, "label_dy": -17},
 }
 
 PANELS = [
@@ -73,6 +73,7 @@ def main() -> None:
         ax.set_axisbelow(True)
         ax.set_title(title, fontsize=10.5, color=SECONDARY, pad=8)
 
+        panel_points = []
         for skey, rows in series.items():
             style = SERIES_STYLE[skey]
             xs = [r["params"] for r in rows if r.get(key) is not None]
@@ -84,11 +85,16 @@ def main() -> None:
                     markerfacecolor=style["mfc"],
                     markeredgecolor=style["color"], markeredgewidth=1.5,
                     label=style["label"])
-            for x, y in zip(xs, ys):
-                text = f"{y:.0%}" if is_rate else f"{y:.2f}×"
-                ax.annotate(text, (x, y), textcoords="offset points",
-                            xytext=(0, 9), ha="center", fontsize=8.5,
-                            color=INK)
+            panel_points.extend(zip(xs, ys))
+
+        # Label placement: when two series share an x, the higher point
+        # labels upward and the lower one downward.
+        for x, y in panel_points:
+            same_x = [py for px, py in panel_points if px == x]
+            dy = 9 if y >= max(same_x) else -17
+            text = f"{y:.0%}" if is_rate else f"{y:.2f}×"
+            ax.annotate(text, (x, y), textcoords="offset points",
+                        xytext=(0, dy), ha="center", fontsize=8.5, color=INK)
 
         if is_rate:
             ax.set_ylim(-0.06, 1.0)

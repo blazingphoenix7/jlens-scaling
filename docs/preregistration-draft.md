@@ -88,12 +88,13 @@ an extension; the same-family base/instruct pair choice.
 
 ## Deviations log
 
-- **2026-07-11, Qwen3-1.7B fitting count.** The fixed recipe specifies 100
-  fitting prompts. The 1.7B rung was fitted on a free Colab T4 whose session
-  budget expired at prompt 65; the lens was reconstructed from the running
-  checkpoint (`scripts/lens_from_checkpoint.py`) at n=65 rather than
-  restarted. Rationale: lens quality saturates well below n=65 (paper §9.3;
-  community ablations find n≈25 comparable), and the alternative (multi-day
-  CPU fit at ~55 h) risked more heterogeneity than it removed. All other
-  recipe parameters unchanged. The planned base-vs-instruct comparison at
-  1.7B will use the same n for both models.
+- **2026-07-11, Qwen3-1.7B fitting count — RESOLVED 2026-07-12.** The fixed
+  recipe specifies 100 fitting prompts. The 1.7B rung was initially fitted on
+  a free Colab T4 whose session budget expired at prompt 65; an interim lens
+  was reconstructed from the running checkpoint
+  (`scripts/lens_from_checkpoint.py`) at n=65 and used for the first-pass
+  battery. The fit was then resumed from the same checkpoint on a Kaggle T4
+  and completed to the full n=100; all published 1.7B numbers come from the
+  n=100 lens (the battery was rerun), and both models in the base-vs-instruct
+  comparison are fitted at n=100 on the identical seeded corpus. No deviation
+  remains in effect.

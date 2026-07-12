@@ -15,36 +15,47 @@ models, starting from the bottom of the ladder.
 *Qwen3-0.6B answering an atomic-number→symbol question: the element name
 ("sodium") is lens rank 1 in the mid-layer band — and is never said.*
 
-## Results — four rungs (desktop CPU + free Colab T4)
+## Results — five models, four instruments
 
 ![workspace signatures across scale](figures/scaling.png)
 
 Fitting: 100 wikitext-103 prompts each (seeded, cached), official
 [`jlens`](https://github.com/anthropics/jacobian-lens) estimator, `dim_batch=16`.
-GPT-2-124M: **80 min CPU**; GPT-2-355M: **≈5.5 h CPU**; Qwen3-0.6B: **≈8.5 h
-CPU**; Qwen3-1.7B: **~4 h free Colab T4, n=65** (session budget; deviation
-logged in the [pre-registration](docs/preregistration-draft.md)). Full
-provenance in `results/*/fit_summary.json`.
+GPT-2 rungs on a 10-core desktop CPU (80 min / ≈5.5 h); Qwen3-0.6B on CPU
+(≈8.5 h); both 1.7B models on free Colab/Kaggle T4s, checkpoint-resumed
+across sessions. Full provenance in `results/*/fit_summary.json`.
 
-| | GPT-2-124M (base) | GPT-2-355M (base) | Qwen3-0.6B (instruct) | Qwen3-1.7B (instruct) |
-|---|---|---|---|---|
-| Verbal report: valid answers | 5/14 | 12/14 | 10/14 | 13/14 |
-| … valid answers band-readable (rank ≤ 5) | 0/5 | 1/12 | 0/10 | 1/13 |
-| Two-hop baseline accuracy | 7/90 (8%) | 15/90 (17%) | 8/90 (9%) | **28/90 (31%)** |
-| … silent intermediate readable, correct items | 5/7 (71%) | 8/15 (53%) | **7/8 (88%)** | 13/28 (46%) |
-| Causal swap success (top-1 / top-5) | 0/7 / 0/7 | 0/15 / 0/15 | **38% / 75%** | **39% / 71%** |
-| Lens concentration vs. isotropic baseline | 1.00× | 1.05× | 1.97× | **2.14×** |
+| | GPT-2-124M (base) | GPT-2-355M (base) | Qwen3-0.6B (instr.) | Qwen3-1.7B (instr.) | Qwen3-1.7B-**Base** |
+|---|---|---|---|---|---|
+| Verbal report: valid answers | 5/14 | 12/14 | 10/14 | 13/14 | 14/14 |
+| … band-readable (rank ≤ 5) | 0/5 | 1/12 | 0/10 | 1/13 | 0/14 |
+| Two-hop accuracy | 8% | 17% | 9% | 31% | **41%** |
+| … intermediate readable, correct items | 71% (n=7) | 53% (n=15) | 88% (n=8) | 50% (n=28) | 70% (n=37) |
+| Causal swap success (top-1 / top-5) | 0 / 0 | 0 / 0 | 38% / 75% | 39% / 71% | **49% / 73%** |
+| Lens concentration vs. baseline | 1.00× | 1.05× | 1.97× | 2.14× | 2.00× |
 
-**The causal split is the headline.** Swapping the silent intermediate's lens
-direction never moves either GPT-2 model (0/22 pooled), while both Qwen3
-models flip to the counterfactual answer at ~39% top-1 — and the 1.7B
-replication carries n=28, four times the 0.6B sample. Lens directions are
-epiphenomenal in one family and load-bearing in the other, at overlapping
-parameter counts.
+**The headline: the causal workspace is built by modern pretraining — not by
+parameter count and not by instruct-tuning.** Swapping the silent
+intermediate's lens direction never moves either GPT-2 model (0/22 pooled),
+while every Qwen3 model flips to the counterfactual answer at 38–49% top-1 —
+including the never-tuned base model, which carries the strongest causal
+effect on the ladder (n=37) and the same 2× variance concentration. Within
+the GPT-2 family, tripling parameters bought capability (8%→17%) but no
+workspace signature; within Qwen3, removing all post-training removed
+nothing. This matches Anthropic's frontier-scale observation that the
+J-space predates RLHF, and adds the control their study lacked: a family
+where the signature is genuinely absent.
 
-No two-hop item is solved by all four rungs (the pre-registered
-capability-matched set is empty at the full-ladder level — reported as
-underpowered; pairwise matching within families is the follow-up analysis).
+**And the report property is absent in all five models** (0–1 valid answers
+band-readable per rung) — even in models whose silent intermediates are
+readable and causally steerable. The workspace's machinery arrives long
+before the ability to report from it.
+
+Caveats, honestly: two model families means "modern pretraining" bundles
+data, architecture, and tokenizer; per-rung n is 7–37 correct items; no
+two-hop item is solved by all five rungs, so the pre-registered
+capability-matched comparison is empty at full-ladder level (reported as
+underpowered; pairwise within-family matching is the follow-up).
 
 **Verbal report is absent at both rungs.** Neither model's forthcoming answer
 is band-readable at rank ≤ 5 before the answer position — though near-misses

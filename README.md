@@ -15,23 +15,36 @@ models, starting from the bottom of the ladder.
 *Qwen3-0.6B answering an atomic-number→symbol question: the element name
 ("sodium") is lens rank 1 in the mid-layer band — and is never said.*
 
-## Results — the first three rungs (fitted on a 10-core desktop CPU)
+## Results — four rungs (desktop CPU + free Colab T4)
+
+![workspace signatures across scale](figures/scaling.png)
 
 Fitting: 100 wikitext-103 prompts each (seeded, cached), official
 [`jlens`](https://github.com/anthropics/jacobian-lens) estimator, `dim_batch=16`.
-GPT-2-124M: **80 min**; GPT-2-355M: **≈5.5 h**; Qwen3-0.6B: **≈8.5 h**
-(the longer fits were checkpoint-resumed across interruptions). Full
+GPT-2-124M: **80 min CPU**; GPT-2-355M: **≈5.5 h CPU**; Qwen3-0.6B: **≈8.5 h
+CPU**; Qwen3-1.7B: **~4 h free Colab T4, n=65** (session budget; deviation
+logged in the [pre-registration](docs/preregistration-draft.md)). Full
 provenance in `results/*/fit_summary.json`.
 
-| | GPT-2-124M (base) | GPT-2-355M (base) | Qwen3-0.6B (instruct) |
-|---|---|---|---|
-| Verbal report: valid answers | 5/14 | 12/14 | 10/14 |
-| … valid answers band-readable (rank ≤ 5) | 0/5 | 1/12 | 0/10 |
-| Two-hop baseline accuracy | 7/90 (8%) | **15/90 (17%)** | 8/90 (9%) |
-| … silent intermediate readable, correct items | 5/7 (71%) | 8/15 (53%) | **7/8 (88%)** |
-| … intermediate ranks on those items | 2–21 | 2–30 | **1–6** |
-| Causal swap success (top-1 / top-5) | 0/7 / 0/7 | 0/15 / 0/15 | **3/8 / 6/8** |
-| Lens concentration vs. isotropic baseline | 1.00× | 1.05× | **1.97×** |
+| | GPT-2-124M (base) | GPT-2-355M (base) | Qwen3-0.6B (instruct) | Qwen3-1.7B (instruct) |
+|---|---|---|---|---|
+| Verbal report: valid answers | 5/14 | 12/14 | 10/14 | 13/14 |
+| … valid answers band-readable (rank ≤ 5) | 0/5 | 1/12 | 0/10 | 1/13 |
+| Two-hop baseline accuracy | 7/90 (8%) | 15/90 (17%) | 8/90 (9%) | **28/90 (31%)** |
+| … silent intermediate readable, correct items | 5/7 (71%) | 8/15 (53%) | **7/8 (88%)** | 13/28 (46%) |
+| Causal swap success (top-1 / top-5) | 0/7 / 0/7 | 0/15 / 0/15 | **38% / 75%** | **39% / 71%** |
+| Lens concentration vs. isotropic baseline | 1.00× | 1.05× | 1.97× | **2.14×** |
+
+**The causal split is the headline.** Swapping the silent intermediate's lens
+direction never moves either GPT-2 model (0/22 pooled), while both Qwen3
+models flip to the counterfactual answer at ~39% top-1 — and the 1.7B
+replication carries n=28, four times the 0.6B sample. Lens directions are
+epiphenomenal in one family and load-bearing in the other, at overlapping
+parameter counts.
+
+No two-hop item is solved by all four rungs (the pre-registered
+capability-matched set is empty at the full-ladder level — reported as
+underpowered; pairwise matching within families is the follow-up analysis).
 
 **Verbal report is absent at both rungs.** Neither model's forthcoming answer
 is band-readable at rank ≤ 5 before the answer position — though near-misses
